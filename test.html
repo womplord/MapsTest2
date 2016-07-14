@@ -68,7 +68,7 @@
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
 	<div id="save">
-		<button id="save" text="Save this location" onclick="getCoordinates()" />
+		<button id="save" text="Save this location" onclick="getCoordinates()" >Store this location</button>
 	</div>
 
     <script>
@@ -81,13 +81,26 @@
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 	
 	
-	function getCoordinates() {
-	document.getElementById('map')
+      function getCoordinates() {
+        var coords = marker.getPosition()
+        alert(coords)
+      
+      }
 	
-	}
-	
+  
+      function placeMarker(location) {
+            marker = new google.maps.Marker({
+            position: location, 
+            map: map
+        });
+        marker.addEventListener('click', function() {
+
+          marker.remove()
+        })
+      }
+
       function initAutocomplete() {
-        var map = new google.maps.Map(document.getElementById('map'), {
+          map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: -33.8688, lng: 151.2195},
           zoom: 13,
           mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -98,6 +111,10 @@
         var searchBox = new google.maps.places.SearchBox(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
+        map.addListener('click', function(event) {
+          placeMarker(event.latLng);
+        });
+              
         // Bias the SearchBox results towards current map's viewport.
         map.addListener('bounds_changed', function() {
           searchBox.setBounds(map.getBounds());
